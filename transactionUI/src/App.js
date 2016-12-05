@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import Web3 from 'web3';
 import _ from 'lodash';
+import T from 'moment';
 
 // Ethereum client interacting with our localhost testRPC
 var ETHEREUM_CLIENT = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
@@ -10,7 +11,7 @@ var ETHEREUM_CLIENT = new Web3(new Web3.providers.HttpProvider("http://localhost
 // ABI and Address of contract living on the localhost
 var contractABI = [{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_money","type":"uint256"}],"name":"transferFromOwner","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getPeople","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"uint256[]"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_personId","type":"address"},{"name":"_firstName","type":"bytes32"},{"name":"_lastName","type":"bytes32"}],"name":"addPerson","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getTransactions","outputs":[{"name":"","type":"address[]"},{"name":"","type":"address[]"},{"name":"","type":"uint256[]"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"peopleArray","outputs":[{"name":"personId","type":"address"},{"name":"firstName","type":"bytes32"},{"name":"lastName","type":"bytes32"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_money","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"transactionArray","outputs":[{"name":"sender","type":"address"},{"name":"receiver","type":"address"},{"name":"timestamp","type":"uint256"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"_personId","type":"address"}],"name":"getBalance","outputs":[{"name":"_balance","type":"uint256"}],"payable":false,"type":"function"},{"inputs":[],"type":"constructor"}];
 
-var contractAddress = '0x04f4b44d431c4edf91356c39d27f3905db1068d3';
+var contractAddress = '0x30bf8f5a5fb42f789545d0d405b7f25fb559ea83';
 
 // Intsance to contract
 var transactionsContract = ETHEREUM_CLIENT.eth.contract(contractABI).at(contractAddress);
@@ -48,13 +49,14 @@ class App extends Component {
     })
   }
 
+  _returnDate(uDate){
+    var t = new Date();
+    t.setMilliseconds(uDate);
+    var converted_date = T(t).format("DD/MM/YYYY - hh:MM:ss");
+    return converted_date;
+  }
+
   render() {
-
-    // console.log(ETHEREUM_CLIENT.eth.getTransactionCount());
-    // console.log(ETHEREUM_CLIENT.eth);
-    // console.log(ETHEREUM_CLIENT.eth.getTransaction('0x208414384a62bfcfb0e82ab94083df0117a086b29790bafd8b941f17ee6a8f4d'));
-
-
     var tableRows = [];
     _.each(this.state.firstNames, (value, index) => {
       tableRows.push(
@@ -72,7 +74,7 @@ class App extends Component {
         <tr key={index}>
           <td>{this.state.senders[index]}</td>
           <td>{this.state.receivers[index]}</td>
-          <td>{this.state.timestamps[index]}</td>
+          <td>{this._returnDate(this.state.timestamps[index])}</td>
         </tr>
       );
     });
