@@ -68,7 +68,8 @@ contract Transactions{
     return (firstNames, lastNames, ages, balances);
   }
 
-  function transfer(address _to, uint _money) returns(bool){
+  // Transfer money from owner to other
+  function transferFromOwner(address _to, uint _money) returns(bool){
     if (personToBalance[msg.sender] < _money){
       return false;
     }
@@ -77,4 +78,13 @@ contract Transactions{
     return true;
   }
 
+  // Transfer from one adress to another address
+  function transfer(address _from, address _to, uint _money) returns(bool){
+    if (personToBalance[_from] == 0 || personToBalance[_from] < _money){
+      return false;
+    }
+    personToBalance[_from] -= _money;
+    personToBalance[_to] += _money;
+    return true;
+  }
 }
