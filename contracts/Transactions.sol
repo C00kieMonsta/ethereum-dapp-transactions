@@ -22,16 +22,14 @@ contract Transactions{
     address personId;
     bytes32 firstName;
     bytes32 lastName;
-    uint age;
   }
 
   // Adding a person to the contract with initial balance of 0
-  function addPerson(address _personId, bytes32 _firstName, bytes32 _lastName, uint _age) returns (bool success){
+  function addPerson(address _personId, bytes32 _firstName, bytes32 _lastName) returns (bool success){
     Person memory newPerson;
     newPerson.personId = _personId;
     newPerson.firstName = _firstName;
     newPerson.lastName = _lastName;
-    newPerson.age = _age;
     if (_personId != msg.sender){
       personToBalance[_personId] = 0;
     }
@@ -53,7 +51,6 @@ contract Transactions{
     // Arrays to be returned
     bytes32[] memory firstNames = new bytes32[](length);
     bytes32[] memory lastNames = new bytes32[](length);
-    uint[] memory ages = new uint[](length);
     uint[] memory balances = new uint[](length);
 
     // Looping through peopleArray
@@ -62,10 +59,9 @@ contract Transactions{
       currentPerson = peopleArray[i];
       firstNames[i] = currentPerson.firstName;
       lastNames[i] = currentPerson.lastName;
-      ages[i] = currentPerson.age;
       balances[i] = getBalance(currentPerson.personId);
     }
-    return (firstNames, lastNames, ages, balances);
+    return (firstNames, lastNames, balances);
   }
 
   // Transfer money from owner to other
