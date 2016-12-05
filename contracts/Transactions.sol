@@ -78,7 +78,7 @@ contract Transactions{
     return true;
   }
 
-  // Transfer from one adress to another
+  // Transfer from one adress to another address
   function transfer(address _from, address _to, uint _money) returns(bool){
     if (personToBalance[_from] == 0 || personToBalance[_from] < _money){
       return false;
