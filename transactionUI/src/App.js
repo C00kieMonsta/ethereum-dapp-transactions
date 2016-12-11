@@ -7,11 +7,13 @@ import T from 'moment';
 
 // Ethereum client interacting with our localhost testRPC
 var ETHEREUM_CLIENT = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+var accounts = ETHEREUM_CLIENT.eth.accounts;
+ETHEREUM_CLIENT.eth.defaultAccount = accounts[0];
 
 // ABI and Address of contract living on the localhost
 var contractABI = [{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_money","type":"uint256"}],"name":"transferFromOwner","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getPeople","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"uint256[]"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_personId","type":"address"},{"name":"_firstName","type":"bytes32"},{"name":"_lastName","type":"bytes32"}],"name":"addPerson","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getTransactions","outputs":[{"name":"","type":"address[]"},{"name":"","type":"address[]"},{"name":"","type":"uint256[]"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"peopleArray","outputs":[{"name":"personId","type":"address"},{"name":"firstName","type":"bytes32"},{"name":"lastName","type":"bytes32"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_money","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"transactionArray","outputs":[{"name":"sender","type":"address"},{"name":"receiver","type":"address"},{"name":"timestamp","type":"uint256"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"_personId","type":"address"}],"name":"getBalance","outputs":[{"name":"_balance","type":"uint256"}],"payable":false,"type":"function"},{"inputs":[],"type":"constructor"}];
 
-var contractAddress = '0x86d9ca5d541b78506edc3749d62b33bd87c330c2';
+var contractAddress = '0x44f7048971328653fe181840887d43f0b8095b18';
 
 // Intsance to contract
 var transactionsContract = ETHEREUM_CLIENT.eth.contract(contractABI).at(contractAddress);
@@ -28,7 +30,10 @@ class App extends Component {
       balances: [],
       senders: [],
       receivers: [],
-      timestamps: []
+      timestamps: [],
+      enteredAddress: "",
+      enteredFirstName: "",
+      enteredLastName: ""
     }
   }
 
@@ -51,6 +56,47 @@ class App extends Component {
     var converted_date = T(t).format("DD/MM/YYYY - hh:MM:ss");
     return converted_date;
   }
+
+
+    //const address = ETHEREUM_CLIENT.eth.accounts[1];
+    _onHandleAddPerson = () => {
+      const address = this.state.enteredAddress;
+      const firstName = this.state.enteredFirstName;
+      const lastName = this.state.enteredLastName;
+
+      // && address.length === 42
+      if (address !== "" && address.length === 42 && firstName !== "" && lastName !== ""){
+          transactionsContract.addPerson(address, firstName, lastName);
+          this.setState({
+            enteredAddress: "",
+            enteredFirstName: "",
+            enteredLastName: ""
+          });
+      }else{
+        console.log("Address not valid");
+      }
+    }
+
+    onChangeAddress = (e) => {
+      const address = e.target.value;
+      this.setState({
+        enteredAddress: address
+      })
+    }
+
+    onChangeFirstName = (e) => {
+      const firstName = e.target.value;
+      this.setState({
+        enteredFirstName: firstName
+      })
+    }
+
+    onChangeLastName = (e) => {
+      const lastName = e.target.value;
+      this.setState({
+        enteredLastName: lastName
+      })
+    }
 
   render() {
     var tableRows = [];
@@ -81,8 +127,13 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1>The Simplest Blockchain Model</h1>
         </div>
+        <div className="App-input-container">
+          <input className="App-input" placeholder="Address" onChange={this.onChangeAddress} value={this.state.enteredAddress}/>
+          <input className="App-input" placeholder="Firstname" onChange={this.onChangeFirstName} value={this.state.enteredFirstName}/>
+          <input className="App-input" placeholder="Lastname" onChange={this.onChangeLastName} value={this.state.enteredLastName}/>
+          <button className="App-button" onClick={this._onHandleAddPerson}>Add Person</button>
+        </div>
         <div>
-
           <table className="App-table">
             <thead className="App-thead">
               <tr>
