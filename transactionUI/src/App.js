@@ -11,16 +11,12 @@ var ETHEREUM_CLIENT = new Web3(new Web3.providers.HttpProvider("http://localhost
 // ABI and Address of contract living on the localhost
 var contractABI = [{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_money","type":"uint256"}],"name":"transferFromOwner","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getPeople","outputs":[{"name":"","type":"bytes32[]"},{"name":"","type":"bytes32[]"},{"name":"","type":"uint256[]"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_personId","type":"address"},{"name":"_firstName","type":"bytes32"},{"name":"_lastName","type":"bytes32"}],"name":"addPerson","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getTransactions","outputs":[{"name":"","type":"address[]"},{"name":"","type":"address[]"},{"name":"","type":"uint256[]"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"peopleArray","outputs":[{"name":"personId","type":"address"},{"name":"firstName","type":"bytes32"},{"name":"lastName","type":"bytes32"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_money","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"transactionArray","outputs":[{"name":"sender","type":"address"},{"name":"receiver","type":"address"},{"name":"timestamp","type":"uint256"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"_personId","type":"address"}],"name":"getBalance","outputs":[{"name":"_balance","type":"uint256"}],"payable":false,"type":"function"},{"inputs":[],"type":"constructor"}];
 
-var contractAddress = '0x30bf8f5a5fb42f789545d0d405b7f25fb559ea83';
+var contractAddress = '0x86d9ca5d541b78506edc3749d62b33bd87c330c2';
 
 // Intsance to contract
 var transactionsContract = ETHEREUM_CLIENT.eth.contract(contractABI).at(contractAddress);
 
 // var sendEvent = transactionsContract.transfer({fromBlock: 0, toBlock: 'latest'});
-
-// sendEvent.watch(function(error, log){
-//     console.log(log);
-//});
 
 class App extends Component {
 
@@ -50,8 +46,8 @@ class App extends Component {
   }
 
   _returnDate(uDate){
-    var t = new Date();
-    t.setMilliseconds(uDate);
+    var t = new Date(0);
+    t.setUTCSeconds(uDate);
     var converted_date = T(t).format("DD/MM/YYYY - hh:MM:ss");
     return converted_date;
   }
