@@ -1,8 +1,13 @@
 // Version of compiler
+// var contract = Transactions.deployed()
+// contract.then(function(instance) {return instance.getPeople()})
+// contract.then(function(instance) {return instance.getBalance.call(web3.eth.accounts[0])}).then(function(balance) {return balance})
+// contract.then(function(instance) {return instance.getBalance.call(web3.eth.accounts[0])}).then(function(balance) {return balance.toNumber()})
 pragma solidity ^0.4.2;
 
 contract Transactions {
 
+  /* State variables */
   // Array of Person instances
   Person[] public peopleArray;
 
@@ -42,9 +47,14 @@ contract Transactions {
     Constructor of contract for initial setups which is going to be
     called once when we deploy the contract
   */
-  function Transactions() public {
-    owner = msg.sender;
-    personToBalance[msg.sender] = 10000;
+  function Transactions(address _personId, bytes32 _firstName, bytes32 _lastName) public {
+    Person memory newPerson;
+    newPerson.personId = _personId;
+    newPerson.firstName = _firstName;
+    newPerson.lastName = _lastName;
+    peopleArray.push(newPerson);
+    owner = _personId;
+    personToBalance[_personId] = 10000;
   }
 
   // Adding a person to the contract with initial balance of 0
@@ -61,12 +71,12 @@ contract Transactions {
   }
 
   // Mapping the balance and the address
-  function getBalance(address _personId) public constant returns (uint _balance) {
+  function getBalance(address _personId) public view returns (uint _balance) {
     return personToBalance[_personId];
   }
 
   // Iterating over peopleArray in order to get a tuple containing each person of the conract
-  function getPeople() public constant returns (bytes32[], bytes32[], uint[]) {
+  function getPeople() public view returns (bytes32[], bytes32[], uint[]) {
 
     // Variable storing the length of people (like in C -> not dynamic sized)
     uint length = peopleArray.length;
@@ -87,7 +97,18 @@ contract Transactions {
     return (firstNames, lastNames, balances);
   }
 
-  function getTransactions() public constant returns (address[], address[], uint[]) {
+  function personExists(address _personId) public view returns (bool) {
+    uint length = peopleArray.length;
+    for (uint i = 0; i < length; i++) {
+      Person memory currentPerson = peopleArray[i];
+      if (currentPerson.personId == _personId) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function getTransactions() public view returns (address[], address[], uint[]) {
 
     // Length of transaction array
     uint length = transactionArray.length;
